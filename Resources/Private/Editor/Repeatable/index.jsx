@@ -11,7 +11,7 @@ import positionalArraySorter from "@neos-project/positional-array-sorter";
 import Loading from "carbon-neos-loadinganimation/LoadingWithStyles";
 import { Sortable, DragHandle } from "./Sortable";
 import Envelope from "./Envelope";
-import { deepMerge, set, isNumeric, dynamicSort, clone, isSame, ClientEvalIsNotFinished } from "./helper";
+import { deepMerge, set, isNumeric, dynamicSort, clone, isSame, ClientEvalIsNotFinished, ItemEval } from "./helper";
 import style from "./style.module.css";
 
 const KEY_PROPERTY = "_UUID_";
@@ -310,12 +310,15 @@ function Repeatable(props) {
     function getProperties(idx) {
         const { predefinedProperties } = options;
         const groupLabel = predefinedProperties && predefinedProperties[idx] ? predefinedProperties[idx].label : null;
-        const properties = [];
+        let properties = [];
         Object.keys(emptyGroup).map((property) => {
             properties.push(getProperty(property, idx));
         });
+        properties = properties.filter(Boolean);
 
-        // positionalArraySorter
+        if (properties.length === 0) {
+            return null;
+        }
 
         return (
             <div className={style.group}>
@@ -372,8 +375,9 @@ function Repeatable(props) {
             }
         }
         const isSimpleView = Object.keys(properties).length <= 1;
+        const hidden = ItemEval(propertyDefinition.hidden, repeatableValue[idx])
         return (
-            <div className={!isSimpleView && style.property} hidden={propertyDefinition.hidden}>
+            <div className={!isSimpleView && style.property} hidden={hidden}>
                 <Envelope
                     identifier={`repeatable-${idx}-${property}`}
                     options={editorOptions}

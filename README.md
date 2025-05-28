@@ -74,6 +74,8 @@ Create property with type `reapeatable`.
               field1:
                 type: 'Neos\Media\Domain\Model\ImageInterface' # type for property mapper
                 label: 'Image field'
+                # Hidden based on another property in the property list
+                hidden: 'ItemEval: !!item.field0'
                 editorOptions:
                   placeholder: 'placeholder test'
               field2:

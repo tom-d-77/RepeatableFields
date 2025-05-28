@@ -35,6 +35,20 @@ export function ClientEvalIsNotFinished(input) {
     return false;
 }
 
+export function ItemEval(propertyValue, item) {
+    if (typeof propertyValue === "string" && propertyValue.startsWith("ItemEval:")) {
+        try {
+            // eslint-disable-next-line no-new-func
+            const evaluateFn = new Function('item', 'return ' + propertyValue.replace('ItemEval:', ''));
+            return evaluateFn(item);
+        } catch (e) {
+            console.warn('An error occurred while trying to evaluate "' + propertyValue + '"\n', e);
+            return propertyValue; // Return the original value if evaluation fails
+        }
+    }
+    return propertyValue;
+}
+
 function isObject(input) {
     return input != null && (input.constructor === Object || (!input.constructor && typeof input === "object"));
 }
