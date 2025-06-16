@@ -35,12 +35,15 @@ export function ClientEvalIsNotFinished(input) {
     return false;
 }
 
-export function ItemEval(propertyValue, item) {
+export function ItemEval(propertyValue, item, node, parentNode, documentNode) {
     if (typeof propertyValue === "string" && propertyValue.startsWith("ItemEval:")) {
         try {
             // eslint-disable-next-line no-new-func
-            const evaluateFn = new Function('item', 'return ' + propertyValue.replace('ItemEval:', ''));
-            return evaluateFn(item);
+            const evaluateFn = new Function(
+                "item,node,parentNode,documentNode",
+                "return " + propertyValue.replace("ItemEval:", ""),
+            );
+            return evaluateFn(item, node, parentNode, documentNode);
         } catch (e) {
             console.warn('An error occurred while trying to evaluate "' + propertyValue + '"\n', e);
             return propertyValue; // Return the original value if evaluation fails

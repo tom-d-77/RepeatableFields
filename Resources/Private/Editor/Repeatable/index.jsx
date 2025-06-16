@@ -24,17 +24,17 @@ const getDataLoaderOptionsForProps = (props) => ({
     dataSourceDisableCaching: Boolean(props.options.dataSourceDisableCaching),
 });
 
-function Repeatable(props) {
-    const {
-        commit,
-        dataSourcesDataLoader,
-        editorRegistry,
-        i18nRegistry,
-        id,
-        validatorRegistry,
-        value,
-        renderHelpIcon,
-    } = props;
+function Repeatable({
+    commit,
+    dataSourcesDataLoader,
+    editorRegistry,
+    i18nRegistry,
+    id,
+    validatorRegistry,
+    value,
+    renderHelpIcon,
+    ...props
+}) {
     const { dataSourceIdentifier, dataSourceUri, dataSourceAdditionalData } = props.options;
     const hasDataSource = !!(dataSourceIdentifier || dataSourceUri);
 
@@ -226,7 +226,7 @@ function Repeatable(props) {
             ...collapsed,
             [idx]: value,
         });
-    }
+    };
 
     function commitChange(idx, property, event) {
         handleValueChange(set(property, event, currentValue));
@@ -295,7 +295,10 @@ function Repeatable(props) {
                     <div class={style.buttons}>
                         {hasMove && <DragHandle />}
                         {hasCollapse && (
-                            <IconButton onClick={() => handleCollapse(idx)} icon={collapsed[idx] ? "chevron-down" : "chevron-up"} />
+                            <IconButton
+                                onClick={() => handleCollapse(idx)}
+                                icon={collapsed[idx] ? "chevron-down" : "chevron-up"}
+                            />
                         )}
                         {hasRemove && (
                             <IconButton onClick={() => handleRemove(idx)} className={style.delete} icon="trash" />
@@ -375,7 +378,13 @@ function Repeatable(props) {
             }
         }
         const isSimpleView = Object.keys(properties).length <= 1;
-        const hidden = ItemEval(propertyDefinition.hidden, repeatableValue[idx])
+        const hidden = ItemEval(
+            propertyDefinition.hidden,
+            repeatableValue[idx],
+            props.node,
+            props.parentNode,
+            props.documentNode,
+        );
         return (
             <div className={!isSimpleView && style.property} hidden={hidden}>
                 <Envelope
@@ -526,5 +535,8 @@ const neosifier = neos((globalRegistry) => ({
 }));
 const connector = connect((state) => ({
     focusedNodePath: selectors.CR.Nodes.focusedNodePathSelector(state),
+    node: selectors.CR.Nodes.focusedSelector(state),
+    parentNode: selectors.CR.Nodes.focusedParentSelector(state),
+    documentNode: selectors.CR.Nodes.documentNodeSelector(state),
 }));
 export default neosifier(connector(Repeatable));
