@@ -1,13 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { neos } from "@neos-project/neos-ui-decorators";
-import omit from "lodash.omit";
 
 const EditorEnvelope = window["@Neos:HostPluginAPI"]["@NeosProjectPackages"]().NeosUiEditors.EditorEnvelope;
 
-function Envelope(props) {
-    function commit(event, hook) {
-        const { commit, id, property, hooksRegistry } = props;
+function Envelope({commit, editorId, editorOptions, id, ...props}) {
+    function commitEnvelope(event, hook) {
+        const { property, hooksRegistry } = props;
         if (hook) {
             Object.keys(hook).map((h) => {
                 const hookPromise = hooksRegistry.get(h);
@@ -20,12 +19,12 @@ function Envelope(props) {
         }
         commit(id, property, event);
     }
-    const restProps = omit(props, ["commit"]);
     return (
         <EditorEnvelope
-            commit={commit}
-            options={restProps.editorOptions ? restProps.editorOptions : {}}
-            {...restProps}
+            {...props}
+            commit={commitEnvelope}
+            options={editorOptions || {}}
+            id={`${editorId}-${id}`}
         />
     );
 }
