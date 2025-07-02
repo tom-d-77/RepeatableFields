@@ -33,6 +33,7 @@ function Repeatable({
     validatorRegistry,
     value,
     renderHelpIcon,
+    identifier,
     ...props
 }) {
     const { dataSourceIdentifier, dataSourceUri, dataSourceAdditionalData } = props.options;
@@ -388,7 +389,7 @@ function Repeatable({
         return (
             <div className={!isSimpleView && style.property} hidden={hidden}>
                 <Envelope
-                    identifier={`repeatable-${idx}-${property}`}
+                    identifier={`${identifier}-repeatable-${idx}-${property}`}
                     options={editorOptions}
                     value={value}
                     renderSecondaryInspector={props.renderSecondaryInspector}
@@ -399,6 +400,7 @@ function Repeatable({
                     highlight={false}
                     property={`${idx}.${property}`}
                     id={`repeatable-${idx}-${property}`}
+                    editorId={id}
                     commit={commitChange}
                     {...propertyDefinition}
                 />
@@ -443,7 +445,7 @@ function Repeatable({
             />
             {options.controls.add && allowAdd && (
                 <>
-                    <Button onClick={handleAdd}>{i18nRegistry.translate(buttonAddLabel)}</Button>
+                    <Button onClick={handleAdd} id={id}>{i18nRegistry.translate(buttonAddLabel)}</Button>
                     {Boolean(label) || renderHelpIcon()}
                 </>
             )}
