@@ -4,7 +4,7 @@ import { neos } from "@neos-project/neos-ui-decorators";
 
 const EditorEnvelope = window["@Neos:HostPluginAPI"]["@NeosProjectPackages"]().NeosUiEditors.EditorEnvelope;
 
-function Envelope({commit, editorId, editorOptions, id, ...props}) {
+function Envelope({ commit, editorId, editorOptions, id, ...props }) {
     function commitEnvelope(event, hook) {
         const { property, hooksRegistry } = props;
         if (hook) {
@@ -19,14 +19,7 @@ function Envelope({commit, editorId, editorOptions, id, ...props}) {
         }
         commit(id, property, event);
     }
-    return (
-        <EditorEnvelope
-            {...props}
-            commit={commitEnvelope}
-            options={editorOptions || {}}
-            id={`${editorId}-${id}`}
-        />
-    );
+    return <EditorEnvelope {...props} commit={commitEnvelope} options={editorOptions || {}} id={`${editorId}-${id}`} />;
 }
 
 Envelope.propTypes = {
