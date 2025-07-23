@@ -35,7 +35,28 @@ export function ClientEvalIsNotFinished(input) {
     return false;
 }
 
-export function ItemEval(propertyValue, item, node, parentNode, documentNode) {
+export function ItemEvalRecursive(input, item, node, parentNode, documentNode) {
+    if (typeof input === "string") {
+        return ItemEval(input, item, node, parentNode, documentNode);
+    }
+
+    if (Array.isArray(input)) {
+        return input.map((value) => ItemEvalRecursive(value, item, node, parentNode, documentNode));
+    }
+
+    if (isObject(input)) {
+        return Object.fromEntries(
+            Object.entries(input).map(([key, value]) => [
+                key,
+                ItemEvalRecursive(value, item, node, parentNode, documentNode),
+            ]),
+        );
+    }
+
+    return input;
+}
+
+function ItemEval(propertyValue, item, node, parentNode, documentNode) {
     if (typeof propertyValue === "string" && propertyValue.startsWith("ItemEval:")) {
         try {
             // eslint-disable-next-line no-new-func
