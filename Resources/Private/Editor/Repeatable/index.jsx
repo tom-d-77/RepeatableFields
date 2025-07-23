@@ -11,7 +11,16 @@ import positionalArraySorter from "@neos-project/positional-array-sorter";
 import Loading from "carbon-neos-loadinganimation/LoadingWithStyles";
 import { Sortable, DragHandle } from "./Sortable";
 import Envelope from "./Envelope";
-import { deepMerge, set, isNumeric, dynamicSort, clone, isSame, ClientEvalIsNotFinished, ItemEval } from "./helper";
+import {
+    deepMerge,
+    set,
+    isNumeric,
+    dynamicSort,
+    clone,
+    isSame,
+    ClientEvalIsNotFinished,
+    ItemEvalRecursive,
+} from "./helper";
 import style from "./style.module.css";
 
 const KEY_PROPERTY = "_UUID_";
@@ -343,7 +352,13 @@ function Repeatable({
     function getProperty(property, idx) {
         const repeatableValue = clone(currentValue);
         const { properties, predefinedProperties } = options;
-        let propertyDefinition = properties[property];
+        let propertyDefinition = ItemEvalRecursive(
+            properties[property],
+            repeatableValue[idx],
+            props.node,
+            props.parentNode,
+            props.documentNode,
+        );
         if (
             predefinedProperties &&
             predefinedProperties[idx] &&
@@ -352,6 +367,7 @@ function Repeatable({
         ) {
             propertyDefinition = deepMerge(propertyDefinition, predefinedProperties[idx]["properties"][property]);
         }
+
         const defaultDataType = propertyDefinition.type ? dataTypes[propertyDefinition.type] : {};
         if (defaultDataType) {
             propertyDefinition = deepMerge(defaultDataType, propertyDefinition);
@@ -379,15 +395,9 @@ function Repeatable({
             }
         }
         const isSimpleView = Object.keys(properties).length <= 1;
-        const hidden = ItemEval(
-            propertyDefinition.hidden,
-            repeatableValue[idx],
-            props.node,
-            props.parentNode,
-            props.documentNode,
-        );
+
         return (
-            <div className={!isSimpleView && style.property} hidden={hidden}>
+            <div className={!isSimpleView && style.property} hidden={propertyDefinition.hidden}>
                 <Envelope
                     identifier={`${identifier}-repeatable-${idx}-${property}`}
                     options={editorOptions}
@@ -445,7 +455,9 @@ function Repeatable({
             />
             {options.controls.add && allowAdd && (
                 <>
-                    <Button onClick={handleAdd} id={id}>{i18nRegistry.translate(buttonAddLabel)}</Button>
+                    <Button onClick={handleAdd} id={id}>
+                        {i18nRegistry.translate(buttonAddLabel)}
+                    </Button>
                     {Boolean(label) || renderHelpIcon()}
                 </>
             )}
