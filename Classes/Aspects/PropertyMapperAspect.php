@@ -21,6 +21,8 @@ class PropertyMapperAspect
      * @var NodePropertyHelper
      */
     protected NodePropertyHelper $nodePropertyHelper;
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Proper property mapper for repeatable field
@@ -32,13 +34,14 @@ class PropertyMapperAspect
     public function getProperty(JoinPointInterface $joinPoint): mixed
     {
         $propertyName = $joinPoint->getMethodArgument('propertyName');
-        /** @var Node $node */
+        /** @var \Neos\ContentRepository\Core\Projection\ContentGraph\Node $node */
         $node = $joinPoint->getProxy();
 
         $explodedPropertyName = explode('.', $propertyName);
 
         if ($explodedPropertyName) {
-            $expectedPropertyType = $node->getNodeType()->getPropertyType($explodedPropertyName[0]);
+            $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
+            $expectedPropertyType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName)->getPropertyType($explodedPropertyName[0]);
 
             if ($expectedPropertyType == 'repeatable') {
                 return $this->nodePropertyHelper->getRepeatableValue($node, $propertyName);

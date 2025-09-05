@@ -43,7 +43,7 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
     private $position = 0;
 
     /**
-     * @var ContentContext
+     * @var \Neos\Rector\ContentRepository90\Legacy\LegacyContextStub
      */
     private $context;
 
@@ -90,7 +90,7 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
                             $propConf = [
                                 'properties' => [$index => ['type' => $targ]]
                             ];
-                            $nodeType = new NodeType('test', [], $propConf);
+                            $nodeType = new \Neos\ContentRepository\Core\NodeType\NodeType('test', [], $propConf);
                             $nodeType->getFullConfiguration();
                             $v = $this->nodePropertyConversionService->convert($nodeType, $index, $val, $context);
                         }

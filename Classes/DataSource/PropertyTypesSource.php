@@ -25,12 +25,12 @@ class PropertyTypesSource extends AbstractDataSource
      *
      * The return value must be JSON serializable data structure.
      *
-     * @param NodeInterface $node The node that is currently edited (optional)
+     * @param \Neos\ContentRepository\Core\Projection\ContentGraph\Node $node The node that is currently edited (optional)
      * @param array $arguments Additional arguments (key / value)
      * @return mixed JSON serializable data
      * @api
      */
-    public function getData(NodeInterface $node = null, array $arguments = [])
+    public function getData(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node = null, array $arguments = [])
     {
         return $this->dataTypes;
     }

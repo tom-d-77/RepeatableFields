@@ -3,7 +3,8 @@ Neos:
     userInterface:
       translation:
         autoInclude:
-          'Mireo.RepeatableFields': ['Main']
+          Mireo.RepeatableFields:
+            - Main
       inspector:
         dataTypes:
           repeatable:
@@ -31,7 +32,7 @@ Neos:
       resources:
         javascript:
           'Mireo.RepeatableFields:RepeatableField':
-            resource: resource://Mireo.RepeatableFields/Public/Plugin.js
+            resource: 'resource://Mireo.RepeatableFields/Public/Plugin.js'
         stylesheets:
           'Mireo.RepeatableFields:RepeatableField':
-            resource: resource://Mireo.RepeatableFields/Public/Plugin.css
+            resource: 'resource://Mireo.RepeatableFields/Public/Plugin.css'
